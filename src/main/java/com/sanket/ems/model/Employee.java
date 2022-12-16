@@ -3,8 +3,11 @@ package com.sanket.ems.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name = "employee")
 @Entity
@@ -33,7 +36,16 @@ public class Employee {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "is_active")
+    private boolean isActive;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "department", referencedColumnName = "department_name")
     private Department departmentFk;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "employees_roles",
+            joinColumns = @JoinColumn(name = "emp_id", referencedColumnName = "emp_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_name", referencedColumnName = "role_name"))
+    private Set<Role> roles;
 }

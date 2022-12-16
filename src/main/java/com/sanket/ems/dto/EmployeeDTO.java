@@ -27,5 +27,8 @@ public class EmployeeDTO {
     private String address;
 
     @NotNull
+    private boolean isActive;
+
+    @NotNull
     private DepartmentDTO department;
 }

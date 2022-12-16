@@ -1,8 +1,12 @@
 package com.sanket.ems.service.role;
 
 import com.sanket.ems.dao.RoleRepository;
+import com.sanket.ems.dto.EmployeeDTO;
 import com.sanket.ems.dto.RoleDTO;
+import com.sanket.ems.model.Employee;
 import com.sanket.ems.model.Role;
+import com.sanket.ems.service.employee.EmployeeMapper;
+import com.sanket.ems.service.employee.EmployeeService;
 import com.sanket.ems.service.role.Exception.DuplicateRoleException;
 import com.sanket.ems.service.role.Exception.RoleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,6 +22,9 @@ public class RoleService {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    EmployeeService employeeService;
 
     public RoleDTO getRole(String roleName){
         Role role = getRoleById(roleName);
@@ -58,5 +66,23 @@ public class RoleService {
 
     public Role getRoleById(String roleName){
         return roleRepository.findById(roleName).orElseThrow(() -> new RoleNotFoundException());
+    }
+
+    @Transactional
+    public void assignRole(EmployeeDTO employeeDTO, RoleDTO roleDTO){
+        Employee employee = employeeService.getEmployeeById(employeeDTO.getEmployeeId());
+        Role role = getRoleById(roleDTO.getRoleName());
+        Set<Role> employeeRoles = employee.getRoles();
+        employeeRoles.add(role);
+        employeeService.updateEmployee(EmployeeMapper.INSTANCE.toDTO(employee));
+    }
+
+    @Transactional
+    public void unAssignRole(EmployeeDTO employeeDTO, RoleDTO roleDTO){
+        Employee employee = employeeService.getEmployeeById(employeeDTO.getEmployeeId());
+        Role role = getRoleById(roleDTO.getRoleName());
+        Set<Role> employeeRoles = employee.getRoles();
+        employeeRoles.removeIf(empRole -> empRole.getRoleName().equals(roleDTO.getRoleName()));
+        employeeService.updateEmployee(EmployeeMapper.INSTANCE.toDTO(employee));
     }
 }

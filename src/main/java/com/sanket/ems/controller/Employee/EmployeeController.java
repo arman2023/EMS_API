@@ -30,12 +30,6 @@ public class EmployeeController {
         return employeeService.getEmployeeList();
     }
 
-    @PostMapping("")
-    public ResponseEntity<EmployeeDTO> saveEmployee(@RequestBody @Valid EmployeeDTO employeeDTO){
-        EmployeeDTO employeeDTO1 = employeeService.saveEmployee(employeeDTO);
-        return new ResponseEntity(employeeDTO1, HttpStatus.CREATED);
-    }
-
     @PutMapping("")
     public ResponseEntity<EmployeeDTO> updateEmployee(@RequestBody @Valid EmployeeDTO employeeDTO){
         EmployeeDTO employeeDTO1 = employeeService.updateEmployee(employeeDTO);

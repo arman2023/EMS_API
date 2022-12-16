@@ -2,7 +2,6 @@ package com.sanket.ems.service.employee;
 
 import com.sanket.ems.dto.EmployeeDTO;
 import com.sanket.ems.model.Employee;
-import com.sanket.ems.service.department.DepartmentMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -22,8 +21,8 @@ public interface EmployeeMapper {
         employee.setFirstName(employeeDTO.getFirstName());
         employee.setLastName(employeeDTO.getLastName());
         employee.setEmail(employeeDTO.getEmail());
-        employee.setPassword(employeeDTO.getPassword());
         employee.setAddress(employeeDTO.getAddress());
+        employee.setActive(employeeDTO.isActive());
         return employee;
     }
 }

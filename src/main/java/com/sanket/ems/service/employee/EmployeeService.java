@@ -4,15 +4,17 @@ import com.sanket.ems.dao.EmployeeRepository;
 import com.sanket.ems.dto.EmployeeDTO;
 import com.sanket.ems.model.Department;
 import com.sanket.ems.model.Employee;
+import com.sanket.ems.model.Role;
 import com.sanket.ems.service.department.DepartmentService;
 import com.sanket.ems.service.employee.Exception.DuplicateEmployeeException;
 import com.sanket.ems.service.employee.Exception.EmployeeNotFoundException;
+import com.sanket.ems.service.role.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,10 +26,14 @@ public class EmployeeService {
     @Autowired
     DepartmentService departmentService;
 
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
+
     @Transactional
     public EmployeeDTO saveEmployee(EmployeeDTO employeeDTO){
         validateEmployee(employeeDTO);
         Employee employee = EmployeeMapper.INSTANCE.toEntity(employeeDTO);
+        passwordEncoder.encode(employee.getPassword());
         Employee newEmployee = employeeRepository.save(employee);
         return EmployeeMapper.INSTANCE.toDTO(newEmployee);
     }
@@ -36,6 +42,7 @@ public class EmployeeService {
     public EmployeeDTO updateEmployee(EmployeeDTO employeeDTO){
         Employee employee = getEmployeeById(employeeDTO.getEmployeeId());
         Employee updatedEmployee = EmployeeMapper.toEntity(employeeDTO, employee);
+        passwordEncoder.encode(employee.getPassword());
         Department department = departmentService.getDepartmentById(employeeDTO.getDepartment().getDepartmentName());
         updatedEmployee.setDepartmentFk(department);
         return EmployeeMapper.INSTANCE.toDTO(updatedEmployee);
