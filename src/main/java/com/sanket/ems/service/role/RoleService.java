@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,9 +23,6 @@ public class RoleService {
 
     @Autowired
     RoleRepository roleRepository;
-
-    @Autowired
-    EmployeeService employeeService;
 
     public RoleDTO getRole(String roleName){
         Role role = getRoleById(roleName);
@@ -69,20 +67,19 @@ public class RoleService {
     }
 
     @Transactional
-    public void assignRole(EmployeeDTO employeeDTO, RoleDTO roleDTO){
-        Employee employee = employeeService.getEmployeeById(employeeDTO.getEmployeeId());
+    public void assignRole(Employee employee, RoleDTO roleDTO){
         Role role = getRoleById(roleDTO.getRoleName());
         Set<Role> employeeRoles = employee.getRoles();
+        if(employeeRoles == null)
+            employeeRoles = new HashSet<>();
         employeeRoles.add(role);
-        employeeService.updateEmployee(EmployeeMapper.INSTANCE.toDTO(employee));
+        employee.setRoles(employeeRoles);
     }
 
     @Transactional
-    public void unAssignRole(EmployeeDTO employeeDTO, RoleDTO roleDTO){
-        Employee employee = employeeService.getEmployeeById(employeeDTO.getEmployeeId());
+    public void unAssignRole(Employee employee, RoleDTO roleDTO){
         Role role = getRoleById(roleDTO.getRoleName());
         Set<Role> employeeRoles = employee.getRoles();
         employeeRoles.removeIf(empRole -> empRole.getRoleName().equals(roleDTO.getRoleName()));
-        employeeService.updateEmployee(EmployeeMapper.INSTANCE.toDTO(employee));
     }
 }

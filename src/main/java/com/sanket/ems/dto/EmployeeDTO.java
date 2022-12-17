@@ -1,10 +1,12 @@
 package com.sanket.ems.dto;
 
+import com.sanket.ems.model.Role;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Data
 public class EmployeeDTO {
@@ -31,4 +33,6 @@ public class EmployeeDTO {
 
     @NotNull
     private DepartmentDTO department;
+
+    private Set<RoleDTO> roles;
 }

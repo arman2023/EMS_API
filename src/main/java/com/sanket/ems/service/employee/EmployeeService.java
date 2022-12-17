@@ -2,6 +2,7 @@ package com.sanket.ems.service.employee;
 
 import com.sanket.ems.dao.EmployeeRepository;
 import com.sanket.ems.dto.EmployeeDTO;
+import com.sanket.ems.dto.RoleDTO;
 import com.sanket.ems.model.Department;
 import com.sanket.ems.model.Employee;
 import com.sanket.ems.model.Role;
@@ -29,11 +30,17 @@ public class EmployeeService {
     @Autowired
     BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    RoleService roleService;
+
     @Transactional
     public EmployeeDTO saveEmployee(EmployeeDTO employeeDTO){
         validateEmployee(employeeDTO);
         Employee employee = EmployeeMapper.INSTANCE.toEntity(employeeDTO);
-        passwordEncoder.encode(employee.getPassword());
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+        Department department = departmentService.getDepartmentById(employeeDTO.getDepartment().getDepartmentName());
+        employee.setDepartmentFk(department);
+        roleService.assignRole(employee, new RoleDTO("USER",""));
         Employee newEmployee = employeeRepository.save(employee);
         return EmployeeMapper.INSTANCE.toDTO(newEmployee);
     }
@@ -67,6 +74,6 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeById(Integer employeeId){
-        return employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException());
+        return employeeRepository.findById(employeeId).orElseThrow(EmployeeNotFoundException::new);
     }
 }
