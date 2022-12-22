@@ -24,11 +24,13 @@ public class RoleService {
     @Autowired
     RoleRepository roleRepository;
 
+    @Transactional
     public RoleDTO getRole(String roleName){
         Role role = getRoleById(roleName);
         return RoleMapper.INSTANCE.toDTO(role);
     }
 
+    @Transactional
     public List<RoleDTO> getRoles(){
         List<Role> roles = roleRepository.findAll();
         List<RoleDTO> roleDTOS = roles.stream().map(RoleMapper.INSTANCE::toDTO).collect(Collectors.toList());
@@ -63,7 +65,7 @@ public class RoleService {
     }
 
     public Role getRoleById(String roleName){
-        return roleRepository.findById(roleName).orElseThrow(() -> new RoleNotFoundException());
+        return roleRepository.findById(roleName).orElseThrow(RoleNotFoundException::new);
     }
 
     @Transactional
@@ -73,12 +75,11 @@ public class RoleService {
         if(employeeRoles == null)
             employeeRoles = new HashSet<>();
         employeeRoles.add(role);
-        employee.setRoles(employeeRoles);
     }
 
     @Transactional
     public void unAssignRole(Employee employee, RoleDTO roleDTO){
-        Role role = getRoleById(roleDTO.getRoleName());
+        getRoleById(roleDTO.getRoleName());
         Set<Role> employeeRoles = employee.getRoles();
         employeeRoles.removeIf(empRole -> empRole.getRoleName().equals(roleDTO.getRoleName()));
     }

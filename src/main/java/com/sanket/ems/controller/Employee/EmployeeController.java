@@ -1,12 +1,15 @@
 package com.sanket.ems.controller.Employee;
 
 import com.sanket.ems.dto.EmployeeDTO;
+import com.sanket.ems.dto.RoleDTO;
 import com.sanket.ems.model.Employee;
 import com.sanket.ems.service.employee.EmployeeMapper;
 import com.sanket.ems.service.employee.EmployeeService;
+import com.sanket.ems.service.role.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,7 +38,6 @@ public class EmployeeController {
         EmployeeDTO employeeDTO1 = employeeService.updateEmployee(employeeDTO);
         return new ResponseEntity(employeeDTO1, HttpStatus.OK);
     }
-
     @DeleteMapping("")
     public ResponseEntity<Void> deleteEmployee(@RequestBody @Valid EmployeeDTO employeeDTO){
         employeeService.deleteEmployee(employeeDTO);

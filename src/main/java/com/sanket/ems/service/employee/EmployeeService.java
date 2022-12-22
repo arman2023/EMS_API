@@ -9,6 +9,7 @@ import com.sanket.ems.model.Role;
 import com.sanket.ems.service.department.DepartmentService;
 import com.sanket.ems.service.employee.Exception.DuplicateEmployeeException;
 import com.sanket.ems.service.employee.Exception.EmployeeNotFoundException;
+import com.sanket.ems.service.role.RoleMapper;
 import com.sanket.ems.service.role.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -61,6 +62,7 @@ public class EmployeeService {
         employeeRepository.delete(employee);
     }
 
+    @Transactional
     public List<EmployeeDTO> getEmployeeList(){
         List<Employee> employees = employeeRepository.findAll();
         List<EmployeeDTO> employeeDTOS = employees.stream().map(EmployeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
@@ -75,5 +77,19 @@ public class EmployeeService {
 
     public Employee getEmployeeById(Integer employeeId){
         return employeeRepository.findById(employeeId).orElseThrow(EmployeeNotFoundException::new);
+    }
+
+    public void assignRole(final String roleName, final EmployeeDTO employeeDTO){
+        Role roleToAssign = roleService.getRoleById(roleName);
+        RoleDTO roleDTO = RoleMapper.INSTANCE.toDTO(roleToAssign);
+        Employee employee = getEmployeeById(employeeDTO.getEmployeeId());
+        roleService.assignRole(employee, roleDTO);
+    }
+
+    public void unAssignRole(final String roleName, final EmployeeDTO employeeDTO){
+        Role roleToAssign = roleService.getRoleById(roleName);
+        RoleDTO roleDTO = RoleMapper.INSTANCE.toDTO(roleToAssign);
+        Employee employee = getEmployeeById(employeeDTO.getEmployeeId());
+        roleService.unAssignRole(employee, roleDTO);
     }
 }

@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 @Table(name = "employee")

@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.Set;
 
 @Table(name = "role")
 @Entity
@@ -21,6 +21,7 @@ public class Role {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(mappedBy = "roles")
-    private Collection<Employee> employees;
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    @JoinColumn(name = "role_name")
+//    private Set<Authority> authorities;
 }
